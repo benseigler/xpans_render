@@ -18,8 +18,8 @@ where
 {
     type Interpretation = T::Interpretation;
 
-    fn interpret_source(&self, source: &Source, result: &mut [Self::Interpretation]) {
-        self.as_ref().interpret_source(source, result);
+    fn interpret_source(&mut self, source: &Source, result: &mut [Self::Interpretation]) {
+        self.as_mut().interpret_source(source, result);
     }
 }
 
@@ -47,7 +47,7 @@ where
 {
     type Interpretation = T::Interpretation;
 
-    fn process_samples(&self, result: &[Self::Interpretation], input: &In, output: &mut Out) {
-        self.as_ref().process_samples(result, input, output);
+    fn process_samples(&mut self, result: &[Self::Interpretation], input: &In, output: &mut Out) {
+        self.as_mut().process_samples(result, input, output);
     }
 }
