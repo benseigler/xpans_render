@@ -20,5 +20,5 @@ where
     type Interpretation;
     /// Evaluates a single audio source's spatial properties into an
     /// `Interpretation`.
-    fn interpret_source(&self, source: &Source, result: &mut [Self::Interpretation]);
+    fn interpret_source(&mut self, source: &Source, result: &mut [Self::Interpretation]);
 }

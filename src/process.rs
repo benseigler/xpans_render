@@ -9,7 +9,7 @@ where
     /// with this processor.
     type Interpretation;
     /// Input is likely an implementor of `Input`.
-    fn process_samples(&self, result: &[Self::Interpretation], input: &In, output: &mut Out);
+    fn process_samples(&mut self, result: &[Self::Interpretation], input: &In, output: &mut Out);
 }
 
 /// A sample processor that specifies the number of output channels it renders to.
