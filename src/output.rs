@@ -10,7 +10,8 @@ pub trait Output<S> {
     processor's `channel_count`.
 
     Sumnation is not performed by the sample processor. Implementors of this
-    trait may choose to perform sumnation within this method.
+    trait may choose to perform sumnation within this method or at a
+    later time.
     */
     fn set_channel(&mut self, channel: usize, sample: S);
 }

@@ -18,12 +18,16 @@ pub trait BufferedInput<S>: Input<S> {
     fn integer_sample(&self, index: usize) -> S;
 }
 
-/// An input that allows previous samples to be retrieved with a
-/// fractional index.
-///
-/// `Frac` is usually a floating point type (i.e. f32 or f64).
+/**
+An input that allows previous samples to be retrieved with a
+fractional index.
+
+`Frac` is usually a floating point type (i.e. f32 or f64).
+*/
 pub trait FractionalInput<S, Frac>: BufferedInput<S> {
-    /// Returns an audio sample using a fractional index, which may involve
-    /// resampling, interpolation, etc.
+    /**
+    Returns an audio sample using a fractional index, which may involve
+    resampling, interpolation, etc.
+    */
     fn fractional_sample(&self, index: Frac) -> S;
 }

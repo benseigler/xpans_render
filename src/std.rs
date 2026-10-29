@@ -1,53 +1,50 @@
-use crate::{
-    interpret::InterpretSource, interpret::InterpretationLength, process::DelaySamples,
-    process::OutputChannels, process::ProcessSamples,
-};
+use crate::mode;
 
-impl<T> InterpretationLength for Box<T>
+impl<T> mode::InterpretationInfo for Box<T>
 where
-    T: ?Sized + InterpretationLength,
+    T: ?Sized + mode::InterpretationInfo,
 {
+    type Interpretation = T::Interpretation;
     fn interpretation_length(&self) -> usize {
         self.as_ref().interpretation_length()
     }
 }
 
-impl<Source, T> InterpretSource<Source> for Box<T>
+impl<Source, I, T> mode::InterpretSource<Source, I> for Box<T>
 where
-    T: ?Sized + InterpretSource<Source>,
+    I: mode::Interpretations<T::Interpretation>,
+    T: ?Sized + mode::InterpretSource<Source, I>,
 {
-    type Interpretation = T::Interpretation;
-
-    fn interpret_source(&mut self, source: &Source, result: &mut [Self::Interpretation]) {
-        self.as_mut().interpret_source(source, result);
+    fn interpret_source(&mut self, source: &Source, interpretations: &mut I) {
+        self.as_mut().interpret_source(source, interpretations);
     }
 }
 
-impl<T> DelaySamples for Box<T>
+impl<T> crate::process::DelaySamples for Box<T>
 where
-    T: ?Sized + DelaySamples,
+    T: ?Sized + crate::process::DelaySamples,
 {
     fn delay_samples(&self, sample_rate: u32) -> usize {
         self.as_ref().delay_samples(sample_rate)
     }
 }
 
-impl<T> OutputChannels for Box<T>
+impl<T> crate::process::OutputChannels for Box<T>
 where
-    T: ?Sized + OutputChannels,
+    T: ?Sized + crate::process::OutputChannels,
 {
     fn output_channels(&self) -> usize {
         self.as_ref().output_channels()
     }
 }
 
-impl<T, In, Out> ProcessSamples<In, Out> for Box<T>
+impl<T, I, In, Out> mode::ProcessSamples<I, In, Out> for Box<T>
 where
-    T: ?Sized + ProcessSamples<In, Out>,
+    I: mode::Interpretations<T::Interpretation>,
+    T: ?Sized + mode::ProcessSamples<I, In, Out>,
 {
-    type Interpretation = T::Interpretation;
-
-    fn process_samples(&mut self, result: &[Self::Interpretation], input: &In, output: &mut Out) {
-        self.as_mut().process_samples(result, input, output);
+    fn process_samples(&mut self, interpretations: &I, input: &In, output: &mut Out) {
+        self.as_mut()
+            .process_samples(interpretations, input, output);
     }
 }
