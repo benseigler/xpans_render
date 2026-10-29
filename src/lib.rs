@@ -7,7 +7,7 @@ For examples on how to implement rendering modes, refer to
 [xpans Stereo](https://github.com/xpans-audio/xpans_stereo) and
 [xpans Headphones](https://github.com/xpans-audio/xpans_headphones).
 
-For an example on how to implement a renderer, refer to
+For an example on how to implement a host, refer to
 [xpans Violet](https://github.com/xpans-audio/xpans_violet).
 */
 #![cfg_attr(not(feature = "std"), no_std)]
@@ -15,9 +15,29 @@ For an example on how to implement a renderer, refer to
 #[cfg(feature = "std")]
 mod std;
 
-pub mod input;
-pub mod interpret;
-pub mod output;
-pub mod process;
+mod input;
+mod interpret;
+mod output;
+mod process;
 
-pub mod prelude;
+/// Imports for hosts
+pub mod host {
+    pub use crate::input::*;
+    pub use crate::output::*;
+
+    pub use crate::interpret::host::{InterpretSource, InterpretationInfo, Interpretations};
+    pub use crate::process::host::ProcessSamples;
+
+    pub use crate::process::{DelaySamples, OutputChannels};
+}
+
+/// Imports for modes
+pub mod mode {
+    pub use crate::input::*;
+    pub use crate::output::*;
+
+    pub use crate::interpret::mode::{InterpretSource, InterpretationInfo, Interpretations};
+    pub use crate::process::mode::ProcessSamples;
+
+    pub use crate::process::{DelaySamples, OutputChannels};
+}
