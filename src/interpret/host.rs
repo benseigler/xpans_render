@@ -61,6 +61,10 @@ Implementing this trait will almost certainly involve writing
 unsafe code.
 */
 pub unsafe trait Interpretations {
+    /// The number of frames available for accessing
+    fn frames(&self) -> usize;
+    /// The number of audio sources available for accessing
+    fn sources(&self) -> usize;
     /// Returns the number of interpretation values per source, per frame
     fn length(&self) -> usize;
     /**
@@ -69,40 +73,46 @@ pub unsafe trait Interpretations {
     # Safety
     `T` must be the same type as the erased type being accessed.
     */
-    unsafe fn get<T>(&self, index: usize) -> &T;
+    unsafe fn get<T>(&self, frame: usize, source: usize, index: usize) -> &T;
     /**
     Returns a mutable reference to the interpretation value at `index`.
 
     # Safety
     `T` must be the same type as the erased type being accessed.
     */
-    unsafe fn get_mut<T>(&mut self, index: usize) -> &mut T;
+    unsafe fn get_mut<T>(&mut self, frame: usize, source: usize, index: usize) -> &mut T;
     /**
     Sets the interpretation value at `index`.
 
     # Safety
     `T` must be the same type as the erased type being accessed.
     */
-    unsafe fn set<T>(&mut self, index: usize, value: T) {
-        unsafe { *self.get_mut(index) = value };
+    unsafe fn set<T>(&mut self, frame: usize, source: usize, index: usize, value: T) {
+        unsafe { *self.get_mut(frame, source, index) = value };
     }
 }
 
 impl<I: Interpretations, T> mode::Interpretations<T> for I {
+    fn frames(&self) -> usize {
+        self.frames()
+    }
+    fn sources(&self) -> usize {
+        self.sources()
+    }
     fn length(&self) -> usize {
         self.length()
     }
 
-    fn get(&self, index: usize) -> &T {
-        unsafe { self.get::<T>(index) }
+    fn get(&self, frame: usize, source: usize, index: usize) -> &T {
+        unsafe { self.get::<T>(frame, source, index) }
     }
 
-    fn get_mut(&mut self, index: usize) -> &mut T {
-        unsafe { self.get_mut::<T>(index) }
+    fn get_mut(&mut self, frame: usize, source: usize, index: usize) -> &mut T {
+        unsafe { self.get_mut::<T>(frame, source, index) }
     }
 
-    fn set(&mut self, index: usize, value: T) {
-        unsafe { self.set::<T>(index, value) }
+    fn set(&mut self, frame: usize, source: usize, index: usize, value: T) {
+        unsafe { self.set::<T>(frame, source, index, value) }
     }
 }
 
@@ -112,7 +122,7 @@ Evaluates an audio source's properties into values used by a sample processor.
 # Safety
 Implementors must ensure memory and type safety when accessing interpretations.
 */
-pub unsafe trait InterpretSource<Source, I>
+pub unsafe trait InterpretSources<Sources, I>
 where
     I: Interpretations,
     Self: InterpretationInfo,
@@ -121,15 +131,15 @@ where
     Evaluates a single audio source's spatial properties into a
     spatial interpretation.
     */
-    fn interpret_source(&mut self, source: &Source, interpretations: &mut I);
+    fn interpret_sources(&mut self, sources: &Sources, interpretations: &mut I);
 }
 
-unsafe impl<Source, I, T> InterpretSource<Source, I> for T
+unsafe impl<Sources, I, T> InterpretSources<Sources, I> for T
 where
     I: Interpretations + mode::Interpretations<T::Interpretation>,
-    T: crate::interpret::mode::InterpretSource<Source, I>,
+    T: crate::interpret::mode::InterpretSources<Sources, I>,
 {
-    fn interpret_source(&mut self, source: &Source, interpretations: &mut I) {
-        self.interpret_source(source, interpretations);
+    fn interpret_sources(&mut self, sources: &Sources, interpretations: &mut I) {
+        self.interpret_sources(sources, interpretations);
     }
 }

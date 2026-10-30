@@ -10,13 +10,13 @@ where
     }
 }
 
-impl<Source, I, T> mode::InterpretSource<Source, I> for Box<T>
+impl<Sources, I, T> mode::InterpretSources<Sources, I> for Box<T>
 where
     I: mode::Interpretations<T::Interpretation>,
-    T: ?Sized + mode::InterpretSource<Source, I>,
+    T: ?Sized + mode::InterpretSources<Sources, I>,
 {
-    fn interpret_source(&mut self, source: &Source, interpretations: &mut I) {
-        self.as_mut().interpret_source(source, interpretations);
+    fn interpret_sources(&mut self, sources: &Sources, interpretations: &mut I) {
+        self.as_mut().interpret_sources(sources, interpretations);
     }
 }
 
@@ -35,6 +35,24 @@ where
 {
     fn output_channels(&self) -> usize {
         self.as_ref().output_channels()
+    }
+}
+
+impl<T> crate::process::MinimumFrames for Box<T>
+where
+    T: ?Sized + crate::process::MinimumFrames,
+{
+    fn minimum_frames(&self, sample_rate: u32) -> usize {
+        self.as_ref().minimum_frames(sample_rate)
+    }
+}
+
+impl<T> crate::process::AcceptableFrames for Box<T>
+where
+    T: ?Sized + crate::process::AcceptableFrames,
+{
+    fn acceptable_frames(&self, sample_rate: u32, frames: usize) -> usize {
+        self.as_ref().acceptable_frames(sample_rate, frames)
     }
 }
 

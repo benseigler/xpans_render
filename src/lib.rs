@@ -25,10 +25,11 @@ pub mod host {
     pub use crate::input::*;
     pub use crate::output::*;
 
-    pub use crate::interpret::host::{InterpretSource, InterpretationInfo, Interpretations};
+    pub use crate::interpret::host::{InterpretSources, InterpretationInfo, Interpretations};
     pub use crate::process::host::ProcessSamples;
 
-    pub use crate::process::{DelaySamples, OutputChannels};
+    pub use crate::interpret::Sources;
+    pub use crate::process::{AcceptableFrames, DelaySamples, MinimumFrames, OutputChannels};
 }
 
 /// Imports for modes
@@ -36,8 +37,9 @@ pub mod mode {
     pub use crate::input::*;
     pub use crate::output::*;
 
-    pub use crate::interpret::mode::{InterpretSource, InterpretationInfo, Interpretations};
+    pub use crate::interpret::mode::{InterpretSources, InterpretationInfo, Interpretations};
     pub use crate::process::mode::ProcessSamples;
 
-    pub use crate::process::{DelaySamples, OutputChannels};
+    pub use crate::interpret::Sources;
+    pub use crate::process::{AcceptableFrames, DelaySamples, MinimumFrames, OutputChannels};
 }
